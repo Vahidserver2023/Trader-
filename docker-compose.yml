@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  trader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crypto_ai_trader
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - APP_MODE=PRODUCTION
+      - DATABASE_URL=postgresql://trader_user:trader_secure_pass@postgres:5432/trader_db
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
+    volumes:
+      - trader_data:/app/data
+      - trader_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: trader_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: trader_db
+      POSTGRES_USER: trader_user
+      POSTGRES_PASSWORD: trader_secure_pass
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trader_user -d trader_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: trader_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+
+volumes:
+  trader_data:
+  trader_logs:
+  pg_data:
+  redis_data:

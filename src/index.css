@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background-color: #0A0B0E;
+    color: #E0E2E6;
+  }
+
+  /* Custom scrollbars for technical data grid */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0B0E;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2A2D32;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3E4249;
+  }
+}
